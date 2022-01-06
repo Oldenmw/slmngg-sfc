@@ -1,5 +1,5 @@
 <template>
-    <div class="embed embed-responsive embed-responsive-16by9" v-html="renderEmbed"></div>
+    <div class="embed embed-responsive embed-responsive-16by9" v-bind:class="{'embed--pdf': embed.service === 'pdf', 'embed--iframe': embed.service === 'unknown'}" v-html="renderEmbed"></div>
 </template>
 
 <script>
@@ -43,6 +43,20 @@ export default {
                 return { service: (vodURL.pathname.split("/").length === 3 ? "twitch" : "twitch-live"), key: vodURL.pathname.slice(vodURL.pathname.lastIndexOf("/") + 1) };
             }
 
+            if (this.src.endsWith(".pdf")) {
+                return {
+                    service: "pdf",
+                    url: this.src
+                };
+            }
+
+            if (["mp4", "webm"].some(file => this.src.endsWith("." + file))) {
+                return {
+                    service: "unknown-video",
+                    url: this.src
+                };
+            }
+
             return { service: "unknown", url: this.src };
         },
         renderEmbed() {
@@ -55,8 +69,14 @@ export default {
             if (this.embed.service === "twitch-live") {
                 return `<iframe src="https://player.twitch.tv/?channel=${this.embed.key}&parent=${window.location.hostname}${this.embed.timestamp ? `&t=${this.embed.timestamp}` : ""}" allowfullscreen="true"></iframe>`;
             }
-            if (this.embed.service === "unknown") {
+            if (this.embed.service === "unknown-video") {
                 return `<video src="${this.embed.url}" autoplay controls></video>`;
+            }
+            if (this.embed.service === "pdf") {
+                return `<iframe src="https://docs.google.com/gview?embedded=true&url=${this.embed.url}" class="embed-pdf"></iframe>`;
+            }
+            if (this.embed.service === "unknown") {
+                return `<iframe src="${this.embed.url}" class="embed-iframe"></iframe>`;
             }
             return `<div class="embed-fail">The VOD couldn't be embedded here. Head to the full link on the external website.<br><a href="${this.src}" target="_blank"></a></div>`;
         }
@@ -65,5 +85,13 @@ export default {
 </script>
 
 <style scoped>
-
+    .embed.embed--pdf, .embed.embed--iframe {
+        min-height: calc(100vh - 430px) !important;
+    }
+    .embed.embed--pdf:before, .embed.embed--iframe:before {
+        display: none;
+    }
+    .embed {
+        background-color: #222;
+    }
 </style>

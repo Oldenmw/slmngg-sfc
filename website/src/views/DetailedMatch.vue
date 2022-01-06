@@ -5,6 +5,12 @@
                 <div class="maps-holder mt-1" v-if="match.maps && showMatchMaps">
                     <MapDisplay v-for="(map, i) in match.maps" :i="i" :map="map" :match="match" :theme="_theme" v-bind:key="map.id"/>
                 </div>
+
+                <div class="special-event-notice" v-if="match.special_event">
+                    <h2>Special event</h2>
+                    This is a special event and doesn't have team information.
+                </div>
+
                 <div class="team-holder f-row mb-2">
                     <div class="team f-col w-50 mt-2" v-for="team in match.teams" v-bind:key="team.id">
                         <div :style="theme(team)" class="team-header flex-center f-col default-thing">
@@ -19,7 +25,7 @@
                                     <div class="player-role-holder player-icon-holder flex-center" v-if="player.role">
                                         <div class="player-role" v-html="getRoleSVG(player.role)"></div>
                                     </div>
-                                    <router-link :to="url('player', player)">{{ player.name }} </router-link>
+                                    <router-link class="ct-active" :to="url('player', player)">{{ player.name }} </router-link>
                                     <span v-if="showCastingInfo && player.pronouns" class="player-pronouns badge rounded-pill bg-light text-dark" :data-pronoun="player.pronouns">{{ player.pronouns }}</span></div>
                                 <div class="player-info player-pronounce" v-if="showCastingInfo"><i class="fas fa-w fa-lips player-icon-holder"></i> {{ player.pronunciation }}</div>
                                 <div class="player-info player-dtag" v-if="showPlayerInfo"><i class="fab fa-fw fa-discord player-icon-holder"></i> {{ player.discord_tag }}</div>
@@ -36,7 +42,7 @@
                                     <div class="player-role-holder player-icon-holder" v-if="player.staff_role">
                                         <div class="player-role" v-html="getRoleSVG(player.staff_role)"></div>
                                     </div>
-                                    <router-link :to="url('player', player)">{{ player.name }}</router-link>
+                                    <router-link class="ct-active" :to="url('player', player)">{{ player.name }} <i class="fas fa-badge-check fa-fw" title="REAL" v-if="player.verified"></i></router-link>
                                 </div>
                                 <div class="player-info player-dtag" v-if="showPlayerInfo && player.discord_tag">
                                     <i class="fab fa-fw fa-discord player-icon-holder"></i> {{ player.discord_tag }}
@@ -62,7 +68,8 @@
                 <ThemeLogo class="top-right-logo mb-3" :theme="_theme" border-width="8"/>
                 <div class="info-block">
 
-                    <router-link :to="`/match/${this.match.id}`" class="btn btn-block btn-primary text-dark">
+                    <router-link :to="`/match/${this.match.id}`" class="btn btn-block border-transparent btn-primary text-dark-low"
+                    :style="theme(match.event)">
                         <i class="fa-fw fas fa-external-link"></i>
                         See match page
                     </router-link>
@@ -117,7 +124,7 @@
                     <stat :match="match" data="sub_event">Sub Event</stat>
 <!-- TODO: change this to spacetime -->
                     <stat :match="match" data="start" time="true">Scheduled start time</stat>
-                    <stat :match="match" data="vod" :format="(e) => `<a href='${e}' target='_blank'>${e.replace('https://', '')}</a>`" raw="true">VOD Link</stat>
+                    <stat :match="match" data="vod" :format="(e) => `<a class='ct-active' href='${e}' target='_blank'>${e.replace('https://', '')}</a>`" raw="true">VOD Link</stat>
                     <stat :match="match" data="clean_feed" :format="(e) => `<a href='${e}' target='_blank'>${getURL(e).hostname}</a>`" raw="true">Clean Feed</stat>
                     <stat :match="match" data="first_to">First to</stat>
                     <stat :match="match" v-for="relGroup in playerRelationshipGroups" v-bind:key="relGroup.meta.singular_name"
@@ -132,12 +139,12 @@
 
 <script>
 import { ReactiveArray, ReactiveRoot, ReactiveThing } from "@/utils/reactive";
-import MapDisplay from "@/components/website/MapDisplay";
+import MapDisplay from "@/components/website/match/MapDisplay";
 import { cssImage, getRoleSVG, multiImage, url } from "@/utils/content-utils";
 import { logoBackground1 } from "@/utils/theme-styles";
 import ThemeLogo from "@/components/website/ThemeLogo";
-import PreviousMatch from "@/components/website/PreviousMatch";
-import DetailedMatchStat from "@/components/website/DetailedMatchStat";
+import PreviousMatch from "@/components/website/match/PreviousMatch";
+import DetailedMatchStat from "@/components/website/match/DetailedMatchStat";
 import Markdown from "@/components/website/Markdown";
 
 export default {
@@ -315,4 +322,11 @@ export default {
     }
 
     .player-icon-holder {width: 1.5em;}
+    .btn-primary.text-dark-low {
+        color: #343a40
+    }
+
+    a.btn-primary.text-dark-low:focus, a.btn-primary.text-dark-low:hover {
+        color: #121416
+    }
 </style>

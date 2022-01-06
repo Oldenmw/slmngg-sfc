@@ -127,7 +127,9 @@ const app = new Vue({
     data: () => ({
         interval: null,
         minisiteEventStatus: subdomain ? "loading" : null,
-        isRebuilding: false
+        isRebuilding: false,
+        animationActive: true,
+        activeScene: null
     }),
     mounted() {
         console.log("[app]", "subdomain", subdomain);
@@ -135,7 +137,7 @@ const app = new Vue({
             this.loadMinisite(subdomain);
         }
 
-        setInterval(() => app.$store.commit("executeRequestBuffer"), 300);
+        setInterval(() => app.$store.commit("executeRequestBuffer"), 100);
 
         try {
             if (localStorage.getItem("draft-notes")) {
@@ -147,6 +149,9 @@ const app = new Vue({
     computed: {
         minisiteEvent() {
             return this.$store.getters.thing(`subdomain-${subdomain}`);
+        },
+        version() {
+            return process.env?.VUE_APP_SLMNGG_VERSION;
         }
     },
     methods: {

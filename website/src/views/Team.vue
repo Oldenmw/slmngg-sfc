@@ -4,12 +4,13 @@
         <SubPageNav class="my-2">
             <li class="nav-item"><router-link class="nav-link" :to="subLink('')">Overview</router-link></li>
             <li class="nav-item" v-if="team.matches"><router-link class="nav-link" :to="subLink('matches')">Matches</router-link></li>
+            <li class="nav-item" v-if="useTeamCompositions"><router-link class="nav-link" :to="subLink('composition')">Composition</router-link></li>
             <li class="nav-item" v-if="team.theme"><router-link class="nav-link" :to="subLink('theme')">Theme</router-link></li>
 <!--            <li class="nav-item"><router-link class="nav-link" :to="subLink('details')">Details</router-link></li>-->
 
             <ul class="socials d-flex" v-if="team.socials">
                 <li class="nav-item">
-                    <Social :social="social" v-for="social in team.socials" v-bind:key="social.id"/>
+                    <Social class="ct-active" :social="social" v-for="social in team.socials" v-bind:key="social.id"/>
                 </li>
             </ul>
 
@@ -71,8 +72,27 @@ export default {
                         theme: ReactiveThing("theme")
                     })
                 }),
-                socials: ReactiveArray("socials")
+                socials: ReactiveArray("socials"),
+                news_items: ReactiveArray("news_items", {
+                    event: ReactiveThing("event", {
+                        theme: ReactiveThing("theme")
+                    }),
+                    team: ReactiveThing("team", {
+                        theme: ReactiveThing("theme")
+                    })
+                })
             });
+        },
+        eventSettings() {
+            if (!this.team?.event?.blocks) return null;
+            try {
+                return JSON.parse(this.team?.event.blocks);
+            } catch (e) {
+                return null;
+            }
+        },
+        useTeamCompositions() {
+            return this.eventSettings?.composition?.use && (this.team?.players || []).some(p => p.composition_tank_sr || p.composition_dps_sr || p.composition_support_sr);
         }
     }
 };

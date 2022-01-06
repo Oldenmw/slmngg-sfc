@@ -22,7 +22,7 @@
             <div class="news-category" v-for="([categoryName, category]) in Object.entries(newsCategories)" v-bind:key="categoryName">
                 <h2>{{ categoryName }}</h2>
                 <div class="row">
-                    <News class="col-6 col-md-4 col-lg-3 mb-3" v-for="item in category" :item="item" v-bind:key="item.id" />
+                    <News class="ct-passive col-6 col-md-4 col-lg-3 mb-3" v-for="item in category" :item="item" v-bind:key="item.id" />
                 </div>
             </div>
         </div>
@@ -33,7 +33,7 @@
 <script>
 import ContentThing from "@/components/website/ContentThing";
 import ContentRow from "@/components/website/ContentRow";
-import News from "@/components/website/News";
+import News from "@/components/website/news/News";
 
 export default {
     name: "EventMain",
@@ -116,6 +116,7 @@ export default {
                 if (item.hide_from_local_listing) return false;
                 if (!item.enabled) return false;
                 if (!item.released) return false;
+                if (item.hide_from_event) return false;
                 if (new Date(item.released) > new Date()) return false;
                 return true;
             });
@@ -123,7 +124,7 @@ export default {
         newsCategories() {
             const categories = {};
             this.filteredNewsItems.forEach(news => {
-                const category = news.category || "Uncategorized";
+                const category = news.category || "Articles";
                 if (!categories[category]) categories[category] = [];
                 categories[category].push(news);
             });
@@ -135,5 +136,7 @@ export default {
 </script>
 
 <style scoped>
-
+    .content-row >>> .content-title {
+        color: var(--theme-ondark);
+    }
 </style>

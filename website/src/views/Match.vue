@@ -1,7 +1,7 @@
 <template>
     <div id="match" v-if="match">
         <MatchHero :match="match" />
-        <div class="container mt-3 text-center">
+        <div class="container mt-3 text-center" v-if="match.special_event ? [match.score_1, match.score_2].some(x => x) : true">
             <MatchScore :match="match" />
         </div>
         <div class="container mt-3 large-container">
@@ -11,8 +11,8 @@
                 </div>
                 <div class="col-12 col-md-3">
                     <ul class="match-sub-nav list-group mb-2" v-if="showHeadToHead"> <!-- only because it'd be the only one -->
-                        <router-link class="list-group-item" exact active-class="active" :to="subLink('')">VOD</router-link>
-                        <router-link v-if="showHeadToHead" class="list-group-item" active-class="active" :to="subLink('history')">Head to head</router-link>
+                        <router-link class="list-group-item ct-passive" exact active-class="active ct-active" :to="subLink('')">VOD</router-link>
+                        <router-link v-if="showHeadToHead" class="list-group-item ct-passive" active-class="active ct-active" :to="subLink('history')">Head to head</router-link>
                     </ul>
 
                     <table class="match-details table-sm">
@@ -59,8 +59,8 @@
 
 <script>
 import { ReactiveArray, ReactiveRoot, ReactiveThing } from "@/utils/reactive";
-import MatchHero from "@/components/website/MatchHero";
-import MatchScore from "@/components/website/MatchScore";
+import MatchHero from "@/components/website/match/MatchHero";
+import MatchScore from "@/components/website/match/MatchScore";
 import LinkedPlayers from "@/components/website/LinkedPlayers";
 import { getMatchContext, multiImage, url } from "@/utils/content-utils";
 
@@ -160,6 +160,7 @@ export default {
             return this.match?.event?.theme;
         },
         showHeadToHead() {
+            if (this.match?.special_event) return false;
             return this.match?.event?.map_pool;
         }
     },
@@ -221,7 +222,7 @@ export default {
 
     .match-sub-nav .list-group-item.active {
         background-color: #333333;
-        color: #fff !important;
+        /*color: #fff !important;*/
         border-color: transparent;
     }
 

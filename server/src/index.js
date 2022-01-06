@@ -6,12 +6,12 @@ const http = require("http").Server(app);
 const cors = require("cors");
 const meta = require("./meta.js");
 const routes = require("./routes.js");
-// const staff = require("./discord/staff.js");
+const staff = require("./discord/staff.js");
 // const api = require("./api/level_1.js");
 // const autodis = require("./discord/autodis.js");
 // const bpl3 = require("./bpl3.js");
 
-let domains = ["slmn.gg", "localslmn", "localhost"].map(d => new RegExp(`(?:^|.*\\.)${d.replace(".", "\\.")}(?:$|\\n)`));
+let domains = (process.env.CORS_VALID_DOMAINS || "slmn.gg,localhost").split(/, */g).map(d => new RegExp(`(?:^|.*\\.)${d.replace(".", "\\.")}(?:$|\\n)`));
 
 function corsHandle(origin, callback) {
     if (!origin) return callback(null);
@@ -77,7 +77,7 @@ app.get("/things/:ids", cors({ origin: corsHandle}), async (req, res) => {
     res.end(JSON.stringify(data));
 });
 
-routes({ app, cors, Cache });
+routes({ app, cors, Cache, io });
 meta({ app, cors, Cache });
 
 function cleanID(id) {
@@ -110,6 +110,11 @@ io.on("connection", (socket) => {
     });
     socket.on("disconnect", () => {
         connected--;
+    });
+
+    socket.on("prod-join", (clientName) => {
+        console.log("prod-join", clientName);
+        socket.join(`prod:client-${clientName}`);
     });
 });
 

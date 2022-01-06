@@ -34,7 +34,7 @@
 
         <h3>Ingame overlay</h3>
         <div class="overlay-area ingame-overlay mb-3">
-            <IngameTeam :team="team"/>
+            <IngameTeam :team="team" :event="team.event" />
         </div>
 
         <h3>Bracket</h3>
@@ -49,7 +49,7 @@
 
 <script>
 import IngameTeam from "@/components/broadcast/IngameTeam";
-import BracketTeam from "@/components/website/BracketTeam";
+import BracketTeam from "@/components/website/bracket/BracketTeam";
 import { getImage } from "@/utils/content-utils";
 import { logoBackground } from "@/utils/theme-styles";
 import ContentRow from "@/components/website/ContentRow";
