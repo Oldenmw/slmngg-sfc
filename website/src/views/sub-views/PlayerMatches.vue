@@ -2,10 +2,10 @@
     <div>
         <div class="container">
             <div>
-                <h6>Games: <a class="role-tag" v-for="rel in mainPlayerRelationships" v-bind:key="rel.meta.singular_name" :href="'#' + rel.meta.singular_name">{{ rel.items.length }} as {{ rel.meta.singular_name }}</a></h6>
+                <h6>Games: <a class="role-tag" v-for="rel in mainPlayerRelationships" v-bind:key="rel.meta.singular_name" :href="'#' + convertToSlug(rel.meta.singular_name)">{{ rel.items.length }} as {{ rel.meta.singular_name }}</a></h6>
             </div>
             <div class="role-group" v-for="rel in mainPlayerRelationships" v-bind:key="rel.meta.singular_name">
-                <h1 :id="rel.meta.singular_name">as {{ rel.meta.singular_name }} ({{ rel.items.length }})</h1>
+                <h1 :id="convertToSlug(rel.meta.singular_name)">as {{ rel.meta.singular_name }} ({{ rel.items.length }})</h1>
                 <div class="row">
                     <Match class="col-12 col-sm-6 col-md-4 col-lg-3 mb-3"
                            v-for="item in rel.items"
@@ -74,6 +74,11 @@ export default {
                 if (groups[key] && groups[key].matches) groups[key].matches = groups[key].matches.sort(sortMatches);
             });
             return groups;
+        }
+    },
+    methods: {
+        convertToSlug(text) {
+            return text.toLowerCase().replace(/ /g, "-").replace(/[^\w-]+/g, "");
         }
     }
 };
