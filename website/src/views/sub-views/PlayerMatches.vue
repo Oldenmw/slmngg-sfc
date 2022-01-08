@@ -85,7 +85,7 @@ export default {
 </script>
 
 <style scoped>
-.master-bar {
+.matches-bar {
   gap: 2rem;
 }
 </style>
