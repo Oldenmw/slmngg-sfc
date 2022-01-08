@@ -1,4 +1,4 @@
-const client = require("./client.js");
+// const client = require("./client.js");
 
 async function getChannel() {
     if (!process.env.SLMNGG_LOGS_GUILD_ID) return null;
@@ -14,6 +14,7 @@ async function getChannel() {
 }
 
 async function log(text) {
+    return;
     let channel = await getChannel();
     if (!channel) return;
     console.log("[Log]", text);
